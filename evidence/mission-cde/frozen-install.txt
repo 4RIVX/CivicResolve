@@ -1,0 +1,3 @@
+bun install v1.4.5 (a7733435c)
+
+Checked 1011 installs across 1040 packages (no changes) [87.00ms]

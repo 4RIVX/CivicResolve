@@ -1,0 +1,5 @@
+GEMINI_API_KEY=not-configured
+ADMIN_EMAILS=not-configured
+APP_URL=not-configured
+GOOGLE_APPLICATION_CREDENTIALS=not-configured
+gcloud=not-installed

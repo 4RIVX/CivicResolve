@@ -1,0 +1,30 @@
+$ vite build
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - `__dirname` (vite.config.ts:22:40). Use `import.meta.dirname` instead
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+vite v8.3.8 building client environment for production...
+transforming...
+✓ 1803 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                     1.53 kB │ gzip:   0.67 kB
+dist/assets/index-DBpuuvTm.css                     34.30 kB │ gzip:   7.07 kB
+dist/assets/arrow-left-D_wylhJM.js                  0.15 kB │ gzip:   0.15 kB
+dist/assets/search-JWAIfheS.js                      0.30 kB │ gzip:   0.23 kB
+dist/assets/LoginPage-W-w7GeqX.js                   1.77 kB │ gzip:   0.87 kB
+dist/assets/StatusBadges-BnRwVtXU.js                3.21 kB │ gzip:   0.86 kB
+dist/assets/PublicTransparencyPage-CKTE7sFj.js      4.52 kB │ gzip:   1.57 kB
+dist/assets/CivicCharts-O6itW-dX.js                 5.12 kB │ gzip:   1.55 kB
+dist/assets/ComplaintDetailPage-Bs38SlOD.js         7.54 kB │ gzip:   2.07 kB
+dist/assets/CitizenDashboardPage-dYQD4tmc.js        9.31 kB │ gzip:   2.33 kB
+dist/assets/AdminComplaintReviewPage-C_jUcIpD.js   11.81 kB │ gzip:   3.08 kB
+dist/assets/AdminDashboardPage-DYdTcGoT.js         12.71 kB │ gzip:   3.29 kB
+dist/assets/CitizenReportPage-BOZOYJSa.js         103.07 kB │ gzip:  29.29 kB
+dist/assets/index-CmKpaFdY.js                     801.70 kB │ gzip: 244.86 kB
+
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 1.03s

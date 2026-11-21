@@ -1,0 +1,1 @@
+$ tsc --noEmit && bun x eslint firestore.rules eslint.config.mjs

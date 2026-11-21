@@ -64,6 +64,12 @@ jobs:
       - name: Test coverage
         run: bun run test:coverage
 
+      - name: Install Chromium for browser tests
+        run: bunx playwright install --with-deps chromium
+
+      - name: Browser accessibility and routing tests
+        run: bun run test:e2e
+
       - name: Firestore Emulator rules regression suite
         run: bun run test:emulator
 
