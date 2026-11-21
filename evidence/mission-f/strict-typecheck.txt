@@ -1,0 +1,5 @@
+$ tsc --noEmit
+src/server/services/firestoreRestClient.ts(320,22): error TS6138: Property 'projectId' is declared but its value is never read.
+src/server/services/firestoreRestClient.ts(321,22): error TS6138: Property 'databaseId' is declared but its value is never read.
+tests/firestore.emulator.test.ts(3,53): error TS6133: 'expect' is declared but its value is never read.
+tests/missionB.test.ts(3,34): error TS6196: 'NextFunction' is declared but never used.

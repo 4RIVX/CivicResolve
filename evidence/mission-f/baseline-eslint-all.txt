@@ -1,0 +1,150 @@
+
+/workspaces/CivicResolve/src/App.tsx
+  33:37  error  Parsing error: Unexpected token :
+
+/workspaces/CivicResolve/src/components/ErrorBoundary.tsx
+  4:1  error  Parsing error: The keyword 'interface' is reserved
+
+/workspaces/CivicResolve/src/components/Layout.tsx
+  10:5  error  Parsing error: Unexpected token <
+
+/workspaces/CivicResolve/src/components/StatusBadges.tsx
+  9:13  error  Parsing error: Unexpected token {
+
+/workspaces/CivicResolve/src/components/charts/CivicCharts.tsx
+  3:13  error  Parsing error: Unexpected token {
+
+/workspaces/CivicResolve/src/contexts/AppContext.tsx
+  2:61  error  Parsing error: Unexpected token User
+
+/workspaces/CivicResolve/src/lib/apiClient.ts
+  1:13  error  Parsing error: Unexpected token {
+
+/workspaces/CivicResolve/src/lib/firebase.ts
+  11:8  error  Parsing error: Unexpected token enum
+
+/workspaces/CivicResolve/src/lib/imageCompression.ts
+  5:8  error  Parsing error: Unexpected token interface
+
+/workspaces/CivicResolve/src/main.tsx
+  5:43  error  Parsing error: Unexpected token !
+
+/workspaces/CivicResolve/src/pages/AdminComplaintReviewPage.tsx
+  10:8  error  Parsing error: Unexpected token AdminNoteRecord
+
+/workspaces/CivicResolve/src/pages/AdminDashboardPage.tsx
+  15:8  error  Parsing error: Unexpected token AuditLogRecord
+
+/workspaces/CivicResolve/src/pages/CitizenDashboardPage.tsx
+  11:8  error  Parsing error: Unexpected token ComplaintRecord
+
+/workspaces/CivicResolve/src/pages/CitizenReportPage.tsx
+  20:8  error  Parsing error: Unexpected token ComplaintCategory
+
+/workspaces/CivicResolve/src/pages/ComplaintDetailPage.tsx
+  7:13  error  Parsing error: Unexpected token {
+
+/workspaces/CivicResolve/src/pages/LandingPage.tsx
+  7:13  error  Parsing error: Unexpected token {
+
+/workspaces/CivicResolve/src/pages/LoginPage.tsx
+  13:21  error  Parsing error: Unexpected token as
+
+/workspaces/CivicResolve/src/pages/PublicTransparencyPage.tsx
+  10:13  error  Parsing error: Unexpected token {
+
+/workspaces/CivicResolve/src/server/app.ts
+  1:24  error  Parsing error: Unexpected token NextFunction
+
+/workspaces/CivicResolve/src/server/auth.ts
+  3:13  error  Parsing error: Unexpected token {
+
+/workspaces/CivicResolve/src/server/config.ts
+  4:8  error  Parsing error: Unexpected token interface
+
+/workspaces/CivicResolve/src/server/services/firestoreAdminStore.ts
+  2:52  error  Parsing error: Unexpected token Firestore
+
+/workspaces/CivicResolve/src/server/services/firestoreRestClient.ts
+  1:13  error  Parsing error: Unexpected token {
+
+/workspaces/CivicResolve/src/server/services/geminiService.ts
+  6:8  error  Parsing error: Unexpected token ComplaintCategory
+
+/workspaces/CivicResolve/src/server/services/publicStatsCache.ts
+  1:13  error  Parsing error: Unexpected token {
+
+/workspaces/CivicResolve/src/server/services/publicStatsMath.ts
+  1:13  error  Parsing error: Unexpected token {
+
+/workspaces/CivicResolve/src/server/utils/imageSecurity.ts
+  1:22  error  Parsing error: Unexpected token Metadata
+
+/workspaces/CivicResolve/src/shared/duplicateDetection.ts
+  3:8  error  Parsing error: Unexpected token interface
+
+/workspaces/CivicResolve/src/shared/i18n.ts
+  8:8  error  Parsing error: Unexpected token interface
+
+/workspaces/CivicResolve/src/shared/safetyRules.ts
+  18:3  error  Parsing error: Unexpected token as
+
+/workspaces/CivicResolve/src/shared/types.ts
+  10:3  error  Parsing error: Unexpected token as
+
+/workspaces/CivicResolve/src/shared/validation.ts
+  22:3  error  Parsing error: Unexpected token as
+
+/workspaces/CivicResolve/tests/accessibility.test.tsx
+  17:21  error  Parsing error: Unexpected token as
+
+/workspaces/CivicResolve/tests/e2e/accessibility.spec.ts
+  1:29  error  Parsing error: Unexpected token Page
+
+/workspaces/CivicResolve/tests/firestore.emulator.test.ts
+  8:8  error  Parsing error: Unexpected token RulesTestEnvironment
+
+/workspaces/CivicResolve/tests/firestore.rules.test.ts
+  9:5  error  Parsing error: Unexpected token as
+
+/workspaces/CivicResolve/tests/firestoreAdminStore.test.ts
+  2:13  error  Parsing error: Unexpected token {
+
+/workspaces/CivicResolve/tests/firestoreRestClient.test.ts
+  8:13  error  Parsing error: Unexpected token {
+
+/workspaces/CivicResolve/tests/geminiService.test.ts
+  8:12  error  Parsing error: Unexpected token models
+
+/workspaces/CivicResolve/tests/imageSecurity.test.ts
+  55:50  error  Parsing error: Unexpected token as
+
+/workspaces/CivicResolve/tests/integration.test.ts
+  5:13  error  Parsing error: Unexpected token {
+
+/workspaces/CivicResolve/tests/missionB.test.ts
+  3:13  error  Parsing error: Unexpected token {
+
+/workspaces/CivicResolve/tests/promptInjection.test.ts
+  7:13  error  Parsing error: Unexpected token {
+
+/workspaces/CivicResolve/tests/publicStatsCache.test.ts
+  8:8  error  Parsing error: Unexpected token CivicDataStore
+
+/workspaces/CivicResolve/tests/rateLimitAndCors.test.ts
+  4:36  error  Parsing error: Unexpected token AppConfig
+
+/workspaces/CivicResolve/tests/securityRegression.test.ts
+  4:13  error  Parsing error: Unexpected token {
+
+/workspaces/CivicResolve/tests/serverBranches.test.ts
+  2:13  error  Parsing error: Unexpected token {
+
+/workspaces/CivicResolve/tests/unit.test.ts
+  21:13  error  Parsing error: Unexpected token {
+
+/workspaces/CivicResolve/vite.config.ts
+  18:26  error  Parsing error: Unexpected token ?
+
+✖ 49 problems (49 errors, 0 warnings)
+

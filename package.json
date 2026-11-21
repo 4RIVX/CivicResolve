@@ -17,7 +17,8 @@
     "test:emulator": "FIRESTORE_EMULATOR_TESTS=1 firebase emulators:exec --only firestore --project civicresolve-emulator-test \"vitest run tests/firestore.emulator.test.ts\"",
     "test:coverage": "vitest run --coverage && bun run check:coverage",
     "check:coverage": "node scripts/check-coverage.mjs",
-    "lint": "tsc --noEmit && bun x eslint firestore.rules eslint.config.mjs",
+    "lint": "bun run typecheck && bun x eslint --ext .js,.mjs,.cjs,.ts,.tsx . firestore.rules",
+    "lint:fix": "bun x eslint --ext .js,.mjs,.cjs,.ts,.tsx . firestore.rules --fix && bun run typecheck",
     "typecheck": "tsc --noEmit"
   },
   "overrides": {
@@ -69,7 +70,8 @@
     "autoprefixer": "^10.4.21",
     "esbuild": "^0.25.0",
     "firebase-tools": "^15.37.0",
+    "globals": "^17.14.0",
     "tailwindcss": "^4.3.3",
-    "typescript": "^7.0.2"
+    "typescript": "^6.0.3"
   }
 }

@@ -316,10 +316,7 @@ export class FirestoreRestStore implements CivicDataStore {
   private readonly baseDocPath: string;
   private readonly apiBase: string;
 
-  constructor(
-    private readonly projectId: string,
-    private readonly databaseId: string = '(default)'
-  ) {
+  constructor(projectId: string, databaseId: string = '(default)') {
     this.baseDocPath = `projects/${projectId}/databases/${databaseId}/documents`;
     this.apiBase = `https://firestore.googleapis.com/v1/${this.baseDocPath}`;
   }
