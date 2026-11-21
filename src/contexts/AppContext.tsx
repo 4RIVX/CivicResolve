@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { onAuthStateChanged, signInWithPopup, signOut, type User } from 'firebase/auth';
+import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
 import { auth, googleProvider } from '../lib/firebase';
 import { apiClient } from '../lib/apiClient';
 import { TRANSLATIONS, type TranslationDictionary } from '../shared/i18n';
@@ -10,7 +10,6 @@ interface AppContextValue {
   language: SupportedLanguage;
   setLanguage: (lang: SupportedLanguage) => void;
   t: TranslationDictionary;
-  firebaseUser: User | null;
   user: AuthenticatedUser | null;
   departments: DepartmentConfig[];
   authLoading: boolean;
@@ -32,7 +31,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   });
 
-  const [firebaseUser, setFirebaseUser] = useState<User | null>(null);
   const [user, setUser] = useState<AuthenticatedUser | null>(null);
   const [departments, setDepartments] = useState<DepartmentConfig[]>(
     Object.values(DEPARTMENT_DIRECTORY)
@@ -56,7 +54,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
-      setFirebaseUser(fbUser);
       setAuthError(null);
       if (!fbUser) {
         setUser(null);
@@ -112,7 +109,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         language,
         setLanguage,
         t: TRANSLATIONS[language],
-        firebaseUser,
         user,
         departments,
         authLoading,

@@ -1,0 +1,3 @@
+COMMAND=bun run lint
+$ bun run typecheck && bun x eslint --ext .js,.mjs,.cjs,.ts,.tsx . firestore.rules
+$ tsc --noEmit

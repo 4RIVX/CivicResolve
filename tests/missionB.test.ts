@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import request from 'supertest';
-import type { Request, Response, NextFunction } from 'express';
+import type { Request, Response } from 'express';
 import { createApp, HttpError } from '../src/server/app';
 import {
   createAuthMiddleware,

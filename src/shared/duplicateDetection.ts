@@ -1,4 +1,4 @@
-import { ComplaintCategory, ComplaintStatus, DuplicateMatch } from './types';
+import type { ComplaintCategory, ComplaintStatus, DuplicateMatch } from './types';
 
 export interface DuplicateCandidate {
   id: string;

@@ -1,0 +1,5 @@
+COMMAND=bun run test
+$ vitest run
+
+ RUN  v5.1.1 /workspaces/CivicResolve
+
