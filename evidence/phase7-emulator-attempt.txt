@@ -1,0 +1,8 @@
+Sat Nov 21 08:46:46 AM UTC 2026
+
+> react-example@0.0.0 test:emulator
+> firebase emulators:exec --only firestore "vitest run tests/firestore.emulator.test.ts"
+
+i  emulators: Shutting down emulators.
+
+Error: Could not spawn `java -version`. Please make sure Java is installed and on your system PATH.

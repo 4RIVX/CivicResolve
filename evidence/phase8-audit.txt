@@ -1,0 +1,6 @@
+Sat Nov 21 08:46:52 AM UTC 2026
+bun audit v1.4.4 (38afee6c8)
+
+No vulnerabilities found (checked 628 packages) [217.00ms]
+@grpc/grpc-js: 1.14.7
+sharp: 0.35.5

@@ -1,0 +1,455 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Authenticated citizen profile isolated from public access.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "email": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 200
+        },
+        "preferredLanguage": {
+          "type": "string",
+          "enum": ["en", "ta"]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["uid", "displayName", "email", "preferredLanguage", "createdAt", "updatedAt"]
+    },
+    "AdminMember": {
+      "title": "AdminMember",
+      "description": "Authorized administrator directory record.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "email": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 200
+        },
+        "grantedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["uid", "email", "grantedAt"]
+    },
+    "Complaint": {
+      "title": "Complaint",
+      "description": "Citizen civic grievance record with AI analysis, priority safety checks, and resolution workflow.",
+      "type": "object",
+      "properties": {
+        "referenceId": {
+          "type": "string",
+          "minLength": 6,
+          "maxLength": 32,
+          "pattern": "^CR-[0-9]{4}-[A-Z0-9]{6}$"
+        },
+        "citizenUid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "citizenEmail": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 200
+        },
+        "citizenName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "title": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 160
+        },
+        "description": {
+          "type": "string",
+          "minLength": 15,
+          "maxLength": 4000
+        },
+        "location": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 200
+        },
+        "area": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 100
+        },
+        "latitude": {
+          "type": "number"
+        },
+        "longitude": {
+          "type": "number"
+        },
+        "hasImage": {
+          "type": "boolean"
+        },
+        "imageDataUrl": {
+          "type": "string",
+          "maxLength": 260000
+        },
+        "userCategory": {
+          "type": "string",
+          "enum": [
+            "ROAD_INFRASTRUCTURE",
+            "GARBAGE_WASTE",
+            "STREETLIGHTS",
+            "WATER_SUPPLY",
+            "DRAINAGE_SEWAGE",
+            "PUBLIC_SAFETY",
+            "SANITATION",
+            "OTHER"
+          ]
+        },
+        "language": {
+          "type": "string",
+          "enum": ["en", "ta"]
+        },
+        "status": {
+          "type": "string",
+          "enum": ["REPORTED", "IN_PROGRESS", "RESOLVED"]
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"]
+        },
+        "severity": {
+          "type": "number"
+        },
+        "department": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 64
+        },
+        "assignedDepartment": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 64
+        },
+        "subcategory": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 64
+        },
+        "aiSource": {
+          "type": "string",
+          "enum": ["GEMINI", "FALLBACK"]
+        },
+        "aiModel": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 64
+        },
+        "aiExplanation": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 1000
+        },
+        "publicImpact": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 600
+        },
+        "recommendedAction": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 600
+        },
+        "confidenceEstimate": {
+          "type": "number"
+        },
+        "safetyEscalated": {
+          "type": "boolean"
+        },
+        "safetyReasons": {
+          "type": "array"
+        },
+        "requiresHumanReview": {
+          "type": "boolean"
+        },
+        "citizenVisibleUpdate": {
+          "type": "string",
+          "maxLength": 1000
+        },
+        "potentialDuplicateIds": {
+          "type": "array"
+        },
+        "duplicateScore": {
+          "type": "number"
+        },
+        "isDemo": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "resolvedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "referenceId",
+        "citizenUid",
+        "citizenEmail",
+        "citizenName",
+        "title",
+        "description",
+        "location",
+        "area",
+        "hasImage",
+        "userCategory",
+        "language",
+        "status",
+        "priority",
+        "severity",
+        "department",
+        "assignedDepartment",
+        "subcategory",
+        "aiSource",
+        "aiModel",
+        "aiExplanation",
+        "publicImpact",
+        "recommendedAction",
+        "confidenceEstimate",
+        "safetyEscalated",
+        "safetyReasons",
+        "requiresHumanReview",
+        "citizenVisibleUpdate",
+        "potentialDuplicateIds",
+        "duplicateScore",
+        "isDemo",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "StatusHistoryEntry": {
+      "title": "StatusHistoryEntry",
+      "description": "Immutable timeline entry tracking complaint status and department changes.",
+      "type": "object",
+      "properties": {
+        "complaintId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "previousStatus": {
+          "type": "string",
+          "enum": ["NONE", "REPORTED", "IN_PROGRESS", "RESOLVED"]
+        },
+        "newStatus": {
+          "type": "string",
+          "enum": ["REPORTED", "IN_PROGRESS", "RESOLVED"]
+        },
+        "changedByUid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "changedByRole": {
+          "type": "string",
+          "enum": ["CITIZEN", "ADMIN", "SYSTEM"]
+        },
+        "note": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "citizenVisible": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["complaintId", "previousStatus", "newStatus", "changedByUid", "changedByRole", "note", "citizenVisible", "createdAt"]
+    },
+    "AdminNote": {
+      "title": "AdminNote",
+      "description": "Internal administrator note attached to a complaint.",
+      "type": "object",
+      "properties": {
+        "complaintId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "authorUid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "authorEmail": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 200
+        },
+        "note": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "internalOnly": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["complaintId", "authorUid", "authorEmail", "note", "internalOnly", "createdAt"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Immutable security and governance audit trail.",
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 80
+        },
+        "actorUid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "actorEmail": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 200
+        },
+        "actorRole": {
+          "type": "string",
+          "enum": ["CITIZEN", "ADMIN"]
+        },
+        "targetType": {
+          "type": "string",
+          "enum": ["COMPLAINT", "NOTE", "SYSTEM"]
+        },
+        "targetId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "details": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 1000
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["action", "actorUid", "actorEmail", "actorRole", "targetType", "targetId", "details", "createdAt"]
+    },
+    "PublicAggregateStats": {
+      "title": "PublicAggregateStats",
+      "description": "Anonymized, PII-free aggregate civic statistics for the Public Transparency Dashboard.",
+      "type": "object",
+      "properties": {
+        "totalReported": { "type": "number" },
+        "reportedCount": { "type": "number" },
+        "inProgressCount": { "type": "number" },
+        "resolvedCount": { "type": "number" },
+        "criticalCount": { "type": "number" },
+        "resolutionRate": { "type": "number" },
+        "avgResolutionHours": { "type": "number" },
+        "byCategory": { "type": "object" },
+        "byPriority": { "type": "object" },
+        "byDepartment": { "type": "object" },
+        "byArea": { "type": "object" },
+        "monthlyTrends": { "type": "array" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "totalReported",
+        "reportedCount",
+        "inProgressCount",
+        "resolvedCount",
+        "criticalCount",
+        "resolutionRate",
+        "avgResolutionHours",
+        "byCategory",
+        "byPriority",
+        "byDepartment",
+        "byArea",
+        "monthlyTrends",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Private citizen user profiles restricted to owner and verified admins."
+    },
+    "/admins/{userId}": {
+      "schema": { "$ref": "#/entities/AdminMember" },
+      "description": "Server/admin-managed directory of elevated administrator UIDs."
+    },
+    "/complaints/{complaintId}": {
+      "schema": { "$ref": "#/entities/Complaint" },
+      "description": "Citizen grievance documents accessible only to owning citizen and verified admins."
+    },
+    "/complaints/{complaintId}/statusHistory/{historyId}": {
+      "schema": { "$ref": "#/entities/StatusHistoryEntry" },
+      "description": "Immutable status transition timeline entries for a complaint."
+    },
+    "/complaints/{complaintId}/adminNotes/{noteId}": {
+      "schema": { "$ref": "#/entities/AdminNote" },
+      "description": "Internal administrator notes strictly hidden from citizens."
+    },
+    "/auditLogs/{logId}": {
+      "schema": { "$ref": "#/entities/AuditLog" },
+      "description": "Append-only governance audit trail readable only by admins."
+    },
+    "/publicStats/{statId}": {
+      "schema": { "$ref": "#/entities/PublicAggregateStats" },
+      "description": "Publicly readable aggregate civic metrics with zero PII."
+    }
+  }
+}

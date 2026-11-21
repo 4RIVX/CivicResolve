@@ -1,0 +1,31 @@
+
+> react-example@0.0.0 lint
+> tsc --noEmit && npx eslint firestore.rules eslint.config.mjs
+
+
+> react-example@0.0.0 test
+> vitest run
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.1.1 [39m[90m/app/applet[39m
+
+ [32m✓[39m tests/firestoreAdminStore.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+ [32m✓[39m tests/integration.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 512[2mms[22m[39m
+ [32m✓[39m tests/accessibility.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[33m 1466[2mms[22m[39m
+   [32m✓[39m WCAG 2.2 AA Accessibility, Components & Bilingual UI Tests [2m(6)[22m
+     [33m[2m✓[22m[39m renders LandingPage inside AppLayout with zero axe-core accessibility violations and working Tamil toggle[33m 586[2mms[22m[39m
+ [32m✓[39m tests/geminiService.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 270[2mms[22m[39m
+ [32m✓[39m tests/firestoreRestClient.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 32[2mms[22m[39m
+ [32m✓[39m tests/unit.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 31[2mms[22m[39m
+ [32m✓[39m tests/firestore.rules.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [2m[90m↓[39m[22m tests/firestore.emulator.test.ts [2m([22m[2m2 tests[22m[2m | [22m[33m2 skipped[39m[2m)[22m
+
+[2m Test Files [22m [1m[32m7 passed[39m[22m[2m | [22m[33m1 skipped[39m[90m (8)[39m
+[2m      Tests [22m [1m[32m29 passed[39m[22m[2m | [22m[33m2 skipped[39m[90m (31)[39m
+[2m   Start at [22m 08:37:12
+[2m   Duration [22m 10.24s[2m (environment 60%, import 18%, setup 11%, tests 9%, transform 2%, worker 1%)[22m
+
+[2mEnvironment [22m [33mjsdom was created 8 times[39m[2m · 15.34s total, 60% of tracked time[22m
+[2m            [22m [2mcreate it once per worker with [22m[33mpool: 'vmThreads'[39m[2m (keeps per-file isolation) or [22m[33misolate: false[39m[2m (shares it across files)[22m
+[2m            [22m [2mlearn more: https://vitest.dev/guide/improving-performance#test-environments[22m
+

@@ -1,0 +1,2 @@
+src/lib/firebase.ts:3:import { doc, getDocFromServer, getFirestore } from 'firebase/firestore';
+src/lib/firebase.ts:65:    await getDocFromServer(doc(db, 'test', 'connection'));

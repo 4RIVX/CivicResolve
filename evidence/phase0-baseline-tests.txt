@@ -1,0 +1,27 @@
+
+> react-example@0.0.0 test
+> vitest run
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.1.1 [39m[90m/app/applet[39m
+
+ [32m✓[39m tests/geminiService.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 269[2mms[22m[39m
+ [32m✓[39m tests/integration.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 497[2mms[22m[39m
+ [32m✓[39m tests/accessibility.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[33m 1429[2mms[22m[39m
+   [32m✓[39m WCAG 2.2 AA Accessibility, Components & Bilingual UI Tests [2m(6)[22m
+     [33m[2m✓[22m[39m renders LandingPage inside AppLayout with zero axe-core accessibility violations and working Tamil toggle[33m 495[2mms[22m[39m
+     [33m[2m✓[22m[39m validates CitizenReportPage form errors, runs AI Triage Preview, and passes axe audit[33m 302[2mms[22m[39m
+ [32m✓[39m tests/unit.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 29[2mms[22m[39m
+ [32m✓[39m tests/firestoreRestClient.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 31[2mms[22m[39m
+ [32m✓[39m tests/firestore.rules.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [2m[90m↓[39m[22m tests/firestore.emulator.test.ts [2m([22m[2m2 tests[22m[2m | [22m[33m2 skipped[39m[2m)[22m
+
+[2m Test Files [22m [1m[32m6 passed[39m[22m[2m | [22m[33m1 skipped[39m[90m (7)[39m
+[2m      Tests [22m [1m[32m26 passed[39m[22m[2m | [22m[33m2 skipped[39m[90m (28)[39m
+[2m   Start at [22m 08:32:37
+[2m   Duration [22m 8.72s[2m (environment 65%, import 12%, tests 11%, setup 10%, transform 2%)[22m
+
+[2mEnvironment [22m [33mjsdom was created 7 times[39m[2m · 13.82s total, 65% of tracked time[22m
+[2m            [22m [2mcreate it once per worker with [22m[33mpool: 'vmThreads'[39m[2m (keeps per-file isolation) or [22m[33misolate: false[39m[2m (shares it across files)[22m
+[2m            [22m [2mlearn more: https://vitest.dev/guide/improving-performance#test-environments[22m
+

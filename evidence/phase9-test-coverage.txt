@@ -1,0 +1,74 @@
+Sat Nov 21 08:47:08 AM UTC 2026
+
+> react-example@0.0.0 test:coverage
+> vitest run --coverage
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.1.1 [39m[90m/app/applet[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+ [32m✓[39m tests/promptInjection.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 659[2mms[22m[39m
+   [32m✓[39m Phase 5 Security: Gemini Prompt-Injection Defence & Schema Allowlists [2m(3)[22m
+     [33m[2m✓[22m[39m rejects citizen payloads trying to smuggle status, role, priority, or department[33m 379[2mms[22m[39m
+ [32m✓[39m tests/rateLimitAndCors.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 903[2mms[22m[39m
+   [32m✓[39m Phase 3 Security: Rate Limiting, Strict CORS, Helmet CSP, and Safe Errors [2m(4)[22m
+     [33m[2m✓[22m[39m enforces AI analyze rate limit (20/hour/uid) and admin mutation limit (60/min/uid)[33m 301[2mms[22m[39m
+     [33m[2m✓[22m[39m enforces public read limit (120/min/IP) and ensures normal demo workflow never hits 429[33m 367[2mms[22m[39m
+ [32m✓[39m tests/accessibility.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[33m 2171[2mms[22m[39m
+   [32m✓[39m WCAG 2.2 AA Accessibility, Components & Bilingual UI Tests [2m(6)[22m
+     [33m[2m✓[22m[39m renders LandingPage inside AppLayout with zero axe-core accessibility violations and working Tamil toggle[33m 745[2mms[22m[39m
+     [33m[2m✓[22m[39m renders PublicTransparencyPage and switches charts cleanly to Table View with zero axe violations[33m 407[2mms[22m[39m
+     [33m[2m✓[22m[39m validates CitizenReportPage form errors, runs AI Triage Preview, and passes axe audit[33m 430[2mms[22m[39m
+     [33m[2m✓[22m[39m renders AdminComplaintReviewPage with duplicate evidence and passes axe audit[33m 351[2mms[22m[39m
+ [32m✓[39m tests/geminiService.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 285[2mms[22m[39m
+ [32m✓[39m tests/integration.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 599[2mms[22m[39m
+   [32m✓[39m CivicResolve Express API Integration Tests [2m(2)[22m
+     [33m[2m✓[22m[39m enforces server-side auth, admin allowlist, ownership isolation, all admin routes, and public zero-PII[33m 324[2mms[22m[39m
+ [32m✓[39m tests/publicStatsCache.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 225[2mms[22m[39m
+ [32m✓[39m tests/imageSecurity.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 59[2mms[22m[39m
+ [32m✓[39m tests/firestoreRestClient.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 46[2mms[22m[39m
+ [32m✓[39m tests/unit.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 48[2mms[22m[39m
+ [32m✓[39m tests/firestoreAdminStore.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 21[2mms[22m[39m
+ [32m✓[39m tests/firestore.rules.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [2m[90m↓[39m[22m tests/firestore.emulator.test.ts [2m([22m[2m2 tests[22m[2m | [22m[33m2 skipped[39m[2m)[22m
+ [32m✓[39m tests/securityRegression.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 119[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m12 passed[39m[22m[2m | [22m[33m1 skipped[39m[90m (13)[39m
+[2m      Tests [22m [1m[32m43 passed[39m[22m[2m | [22m[33m2 skipped[39m[90m (45)[39m
+[2m   Start at [22m 08:47:09
+[2m   Duration [22m 18.83s[2m (environment 54%, import 23%, tests 11%, setup 9%, worker 2%, transform 1%)[22m
+
+[2mEnvironment [22m [33mjsdom was created 13 times[39m[2m · 24.94s total, 54% of tracked time[22m
+[2m            [22m [2mcreate it once per worker with [22m[33mpool: 'vmThreads'[39m[2m (keeps per-file isolation) or [22m[33misolate: false[39m[2m (shares it across files)[22m
+[2m            [22m [2mlearn more: https://vitest.dev/guide/improving-performance#test-environments[22m
+
+[34m % [39m[2mCoverage report from [22m[33mv8[39m
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   85.84 |    76.22 |   82.58 |   87.03 |                   
+ components        |   77.55 |    78.26 |   58.82 |   79.16 |                   
+  ...rBoundary.tsx |   91.66 |       70 |      75 |   91.66 | 47                
+  Layout.tsx       |   56.52 |    73.07 |   45.45 |   59.09 | 57-61,125-154     
+  StatusBadges.tsx |     100 |      100 |     100 |     100 |                   
+ components/charts |     100 |     82.6 |     100 |     100 |                   
+  CivicCharts.tsx  |     100 |     82.6 |     100 |     100 | 86-98,168-173     
+ server            |   84.03 |    73.44 |   88.88 |   84.25 |                   
+  app.ts           |   82.81 |    70.86 |   90.32 |   83.26 | ...47,762,874,902 
+  auth.ts          |      84 |    79.24 |      75 |   83.33 | 23-31,126-127     
+  config.ts        |   96.15 |    75.67 |     100 |      96 | 30                
+ server/services   |   86.72 |    71.62 |    78.4 |   89.36 |                   
+  ...AdminStore.ts |   71.73 |    44.68 |      60 |   72.72 | ...64,180,329-340 
+  ...RestClient.ts |   90.79 |    70.96 |   84.61 |   93.98 | ...61,576,590,737 
+  geminiService.ts |      94 |       95 |   81.81 |   93.75 | 81,89-90          
+  ...StatsCache.ts |     100 |       80 |     100 |     100 | 18,43-54          
+  ...cStatsMath.ts |   82.43 |    77.77 |    87.5 |   89.06 | ...62-163,173,195 
+ server/utils      |   90.16 |    87.14 |     100 |      90 |                   
+  imageSecurity.ts |   90.16 |    87.14 |     100 |      90 | ...14,161-164,168 
+ shared            |   86.12 |    88.28 |     100 |   86.14 |                   
+  ...eDetection.ts |   95.16 |    90.24 |     100 |   96.49 | 128-129           
+  i18n.ts          |     100 |      100 |     100 |     100 |                   
+  safetyRules.ts   |   76.13 |    86.56 |     100 |   75.86 | ...48-251,267-281 
+  types.ts         |     100 |      100 |     100 |     100 |                   
+  validation.ts    |     100 |      100 |     100 |     100 |                   
+-------------------|---------|----------|---------|---------|-------------------

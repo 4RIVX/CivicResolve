@@ -1,0 +1,40 @@
+Sat Nov 21 08:44:41 AM UTC 2026
+
+> react-example@0.0.0 lint
+> tsc --noEmit && npx eslint firestore.rules eslint.config.mjs
+
+
+> react-example@0.0.0 test
+> vitest run
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.1.1 [39m[90m/app/applet[39m
+
+ [32m✓[39m tests/accessibility.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[33m 1570[2mms[22m[39m
+   [32m✓[39m WCAG 2.2 AA Accessibility, Components & Bilingual UI Tests [2m(6)[22m
+     [33m[2m✓[22m[39m renders LandingPage inside AppLayout with zero axe-core accessibility violations and working Tamil toggle[33m 594[2mms[22m[39m
+     [33m[2m✓[22m[39m validates CitizenReportPage form errors, runs AI Triage Preview, and passes axe audit[33m 312[2mms[22m[39m
+ [32m✓[39m tests/integration.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 567[2mms[22m[39m
+ [32m✓[39m tests/rateLimitAndCors.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 840[2mms[22m[39m
+   [32m✓[39m Phase 3 Security: Rate Limiting, Strict CORS, Helmet CSP, and Safe Errors [2m(4)[22m
+     [33m[2m✓[22m[39m enforces public read limit (120/min/IP) and ensures normal demo workflow never hits 429[33m 331[2mms[22m[39m
+ [32m✓[39m tests/imageSecurity.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 68[2mms[22m[39m
+ [32m✓[39m tests/geminiService.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 283[2mms[22m[39m
+ [32m✓[39m tests/unit.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 58[2mms[22m[39m
+ [32m✓[39m tests/firestoreRestClient.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 31[2mms[22m[39m
+ [32m✓[39m tests/firestoreAdminStore.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32m✓[39m tests/promptInjection.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 622[2mms[22m[39m
+   [32m✓[39m Phase 5 Security: Gemini Prompt-Injection Defence & Schema Allowlists [2m(3)[22m
+     [33m[2m✓[22m[39m rejects citizen payloads trying to smuggle status, role, priority, or department[33m 344[2mms[22m[39m
+ [32m✓[39m tests/firestore.rules.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [2m[90m↓[39m[22m tests/firestore.emulator.test.ts [2m([22m[2m2 tests[22m[2m | [22m[33m2 skipped[39m[2m)[22m
+
+[2m Test Files [22m [1m[32m10 passed[39m[22m[2m | [22m[33m1 skipped[39m[90m (11)[39m
+[2m      Tests [22m [1m[32m39 passed[39m[22m[2m | [22m[33m2 skipped[39m[90m (41)[39m
+[2m   Start at [22m 08:44:45
+[2m   Duration [22m 14.47s[2m (environment 56%, import 22%, tests 11%, setup 9%, transform 1%, worker 1%)[22m
+
+[2mEnvironment [22m [33mjsdom was created 11 times[39m[2m · 21.38s total, 56% of tracked time[22m
+[2m            [22m [2mcreate it once per worker with [22m[33mpool: 'vmThreads'[39m[2m (keeps per-file isolation) or [22m[33misolate: false[39m[2m (shares it across files)[22m
+[2m            [22m [2mlearn more: https://vitest.dev/guide/improving-performance#test-environments[22m
+

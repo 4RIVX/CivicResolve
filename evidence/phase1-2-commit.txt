@@ -1,0 +1,2 @@
+508269d feat(security): remove admin bootstrap fallback and lock publicStats to Admin SDK transactions (Phases 1-2)
+030a17d chore(phase0): checkpoint baseline before Mission A security hardening

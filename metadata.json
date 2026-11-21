@@ -1,0 +1,6 @@
+{
+  "name": "CivicResolve",
+  "description": "AI-powered citizen grievance management and resolution platform with Gemini intelligence, Cloud Firestore persistence, and public transparency analytics.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
