@@ -13,14 +13,18 @@
     "test:unit": "vitest run tests/unit.test.ts tests/imageSecurity.test.ts tests/promptInjection.test.ts tests/geminiService.test.ts tests/publicStatsCache.test.ts tests/firestoreAdminStore.test.ts tests/firestoreRestClient.test.ts",
     "test:integration": "vitest run tests/integration.test.ts tests/missionB.test.ts tests/rateLimitAndCors.test.ts tests/securityRegression.test.ts tests/firestore.rules.test.ts",
     "test:security": "vitest run tests/securityRegression.test.ts tests/rateLimitAndCors.test.ts tests/promptInjection.test.ts tests/imageSecurity.test.ts tests/firestore.rules.test.ts",
-    "test:emulator": "firebase emulators:exec --only firestore --project civicresolve-emulator-test \"vitest run tests/firestore.emulator.test.ts\"",
+    "test:emulator": "FIRESTORE_EMULATOR_TESTS=1 firebase emulators:exec --only firestore --project civicresolve-emulator-test \"vitest run tests/firestore.emulator.test.ts\"",
     "test:coverage": "vitest run --coverage && bun run check:coverage",
     "check:coverage": "node scripts/check-coverage.mjs",
-    "lint": "tsc --noEmit && npx eslint firestore.rules eslint.config.mjs",
+    "lint": "tsc --noEmit && bun x eslint firestore.rules eslint.config.mjs",
     "typecheck": "tsc --noEmit"
   },
   "overrides": {
-    "@grpc/grpc-js": "^1.14.7"
+    "@grpc/grpc-js": "^1.14.7",
+    "@opentelemetry/core": "^2.8.0",
+    "glob": "^14.0.2",
+    "minimatch": "^11.0.1",
+    "uuid": "^11.1.1"
   },
   "dependencies": {
     "@eslint/js": "^10.0.1",

@@ -372,4 +372,78 @@ describe('FirestoreRestStore & Pure Aggregation Helpers', () => {
     expect(fallbackStats.totalReported).toBe(0);
     expect(await store.listRecentComplaintsForDuplicateCheck('tok-1234567890', 'uid-a', true)).toEqual([]);
   });
+
+  it('handles absent Firestore results, missing aggregates, and query failures safely', async () => {
+    let queriesFail = false;
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      const url = String(input);
+      if (url.endsWith(':commit')) {
+        return new Response(JSON.stringify({ writeResults: [] }), { status: 200 });
+      }
+      if (url.endsWith(':runQuery')) {
+        if (queriesFail) return new Response('Forbidden', { status: 403 });
+        return new Response(
+          JSON.stringify([
+            {},
+            {
+              document: {
+                name: 'projects/p/databases/d/documents/complaints/cmp_1',
+                fields: { createdAt: { timestampValue: '2026-11-20T10:00:00.000Z' } },
+              },
+            },
+          ]),
+          { status: 200 }
+        );
+      }
+      if (url.includes('/complaints/missing')) return new Response('Not found', { status: 404 });
+      if (url.includes('/complaints/error')) return new Response('Unavailable', { status: 503 });
+      if (url.endsWith('/publicStats/aggregate')) return new Response('Not found', { status: 404 });
+      if (url.includes('/statusHistory') || url.includes('/adminNotes') || url.includes('/auditLogs')) {
+        return new Response(JSON.stringify({}), { status: 200 });
+      }
+      return new Response(JSON.stringify({}), { status: 200 });
+    });
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+
+    const store = new FirestoreRestStore('test-proj', '(default)');
+    const sample = makeComplaint();
+    const created = await store.createComplaintWithRecords({
+      idToken: 'token-with-enough-length',
+      complaint: sample,
+      initialHistory: {
+        previousStatus: 'NONE',
+        newStatus: 'REPORTED',
+        changedByUid: 'uid-a',
+        changedByRole: 'CITIZEN',
+        note: 'Created.',
+        citizenVisible: true,
+      },
+      auditLog: {
+        action: 'COMPLAINT_SUBMITTED',
+        actorUid: 'uid-a',
+        actorEmail: 'a@example.com',
+        actorRole: 'CITIZEN',
+        targetType: 'COMPLAINT',
+        targetId: sample.referenceId,
+        details: 'Created.',
+      },
+    });
+    expect(created.id).toMatch(/^doc_/);
+    expect((await store.getPublicAggregateStats()).totalReported).toBe(0);
+
+    const listed = await store.listComplaints('token-with-enough-length', { page: 1, pageSize: 10 });
+    expect(listed.total).toBe(1);
+    expect(await store.getComplaintById('token-with-enough-length', 'missing')).toBeNull();
+    await expect(store.getComplaintById('token-with-enough-length', 'error')).rejects.toThrow(
+      'Firestore request failed (503)'
+    );
+    expect(await store.getStatusHistory('token-with-enough-length', 'cmp_1')).toEqual([]);
+    expect(await store.getAdminNotes('token-with-enough-length', 'cmp_1')).toEqual([]);
+    expect(await store.listAuditLogs('token-with-enough-length')).toEqual([]);
+
+    queriesFail = true;
+    expect(
+      await store.listRecentComplaintsForDuplicateCheck('token-with-enough-length', 'uid-a', false)
+    ).toEqual([]);
+  });
 });
