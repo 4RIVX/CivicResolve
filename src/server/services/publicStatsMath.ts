@@ -41,6 +41,7 @@ export function sanitizePublicStats(raw: Partial<PublicAggregateStats> | null | 
             (m) =>
               m &&
               typeof m.month === 'string' &&
+              m.month.length > 0 &&
               typeof m.reported === 'number' &&
               typeof m.resolved === 'number'
           )

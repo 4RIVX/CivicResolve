@@ -6,6 +6,7 @@ import {
   applyComplaintUpdateToStats,
   sanitizePublicStats,
 } from '../src/server/services/publicStatsMath';
+import { createEmptyPublicStats } from '../src/server/services/firestoreRestClient';
 import type { ComplaintRecord } from '../src/shared/types';
 
 function createMockAdminFirestore() {
