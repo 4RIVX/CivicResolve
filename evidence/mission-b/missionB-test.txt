@@ -1,0 +1,9 @@
+
+ RUN  v5.1.1 /workspaces/CivicResolve
+
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Start at  10:14:07
+   Duration  2.25s (import 39%, environment 31%, tests 19%, transform 6%, setup 4%)
+

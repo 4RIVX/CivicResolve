@@ -59,10 +59,15 @@ function validComplaintData(citizenUid: string) {
   };
 }
 
-describe.skipIf(!EMULATOR_HOST)('Firebase Firestore Emulator Security Rules Suite', () => {
+describe('Firebase Firestore Emulator Security Rules Suite', () => {
   let testEnv: RulesTestEnvironment;
 
   beforeAll(async () => {
+    if (!EMULATOR_HOST) {
+      throw new Error(
+        'Firestore emulator tests require FIRESTORE_EMULATOR_HOST and must be run through "bun run test:emulator".'
+      );
+    }
     const [host, portStr] = (EMULATOR_HOST ?? '127.0.0.1:8080').split(':');
     testEnv = await initializeTestEnvironment({
       projectId: 'civicresolve-emulator-test',
@@ -180,5 +185,79 @@ describe.skipIf(!EMULATOR_HOST)('Firebase Firestore Emulator Security Rules Suit
       updateDoc(doc(citizenDb, 'publicStats/aggregate'), { totalReported: 999 })
     );
     await assertFails(deleteDoc(doc(citizenDb, 'publicStats/aggregate')));
+  });
+
+  it('denies unauthenticated complaint and subcollection access', async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), 'complaints/c1'), validComplaintData('uid-a'));
+    });
+    const db = testEnv.unauthenticatedContext().firestore();
+    await assertFails(getDoc(doc(db, 'complaints/c1')));
+    await assertFails(getDocs(collection(db, 'complaints')));
+    await assertFails(getDocs(collection(db, 'auditLogs')));
+  });
+
+  it('allows an owner read and denies cross-citizen complaint reads', async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), 'complaints/c1'), validComplaintData('uid-a'));
+    });
+    const owner = testEnv.authenticatedContext('uid-a', { email_verified: true }).firestore();
+    const other = testEnv.authenticatedContext('uid-b', { email_verified: true }).firestore();
+    await assertSucceeds(getDoc(doc(owner, 'complaints/c1')));
+    await assertFails(getDoc(doc(other, 'complaints/c1')));
+  });
+
+  it('denies client membership in the server-side administrators collection', async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), 'admins/uid-a'), { uid: 'uid-a', email: 'a@example.com' });
+    });
+    const citizen = testEnv.authenticatedContext('uid-a', { email_verified: true }).firestore();
+    await assertFails(getDoc(doc(citizen, 'admins/uid-a')));
+    await assertFails(setDoc(doc(citizen, 'admins/uid-a'), { uid: 'uid-a', role: 'ADMIN' }));
+  });
+
+  it('keeps adminNotes and status-history writes client-denied', async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      const db = ctx.firestore();
+      await setDoc(doc(db, 'complaints/c1'), validComplaintData('uid-a'));
+      await setDoc(doc(db, 'complaints/c1/statusHistory/h1'), {
+        complaintId: 'c1',
+        previousStatus: 'NONE',
+        newStatus: 'REPORTED',
+        citizenVisible: true,
+        createdAt: serverTimestamp(),
+      });
+    });
+    const owner = testEnv.authenticatedContext('uid-a', { email_verified: true }).firestore();
+    await assertSucceeds(getDoc(doc(owner, 'complaints/c1/statusHistory/h1')));
+    await assertFails(setDoc(doc(owner, 'complaints/c1/statusHistory/h2'), { newStatus: 'RESOLVED' }));
+    await assertFails(setDoc(doc(owner, 'complaints/c1/adminNotes/n1'), { note: 'Forged' }));
+  });
+
+  it('protects audit logs from client reads and writes', async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), 'auditLogs/log1'), { action: 'COMPLAINT_SUBMITTED' });
+    });
+    const citizen = testEnv.authenticatedContext('uid-a', { email_verified: true }).firestore();
+    await assertFails(getDoc(doc(citizen, 'auditLogs/log1')));
+    await assertFails(updateDoc(doc(citizen, 'auditLogs/log1'), { action: 'TAMPERED' }));
+    await assertFails(deleteDoc(doc(citizen, 'auditLogs/log1')));
+  });
+
+  it('restricts status history subcollection to the verified complaint owner', async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      const db = ctx.firestore();
+      await setDoc(doc(db, 'complaints/c1'), validComplaintData('uid-a'));
+      await setDoc(doc(db, 'complaints/c1/statusHistory/h1'), {
+        complaintId: 'c1',
+        newStatus: 'REPORTED',
+        citizenVisible: true,
+        createdAt: serverTimestamp(),
+      });
+    });
+    const owner = testEnv.authenticatedContext('uid-a', { email_verified: true }).firestore();
+    const other = testEnv.authenticatedContext('uid-b', { email_verified: true }).firestore();
+    await assertSucceeds(getDocs(collection(owner, 'complaints/c1/statusHistory')));
+    await assertFails(getDocs(collection(other, 'complaints/c1/statusHistory')));
   });
 });

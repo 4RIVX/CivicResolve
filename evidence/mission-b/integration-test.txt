@@ -1,0 +1,14 @@
+$ vitest run tests/integration.test.ts tests/missionB.test.ts tests/rateLimitAndCors.test.ts tests/securityRegression.test.ts tests/firestore.rules.test.ts
+
+ RUN  v5.1.1 /workspaces/CivicResolve
+
+
+ Test Files  5 passed (5)
+      Tests  19 passed (19)
+   Start at  10:14:35
+   Duration  8.46s (environment 40%, import 37%, tests 16%, setup 5%, transform 3%)
+
+Environment  jsdom was created 5 times · 3.05s total, 40% of tracked time
+             create it once per worker with pool: 'vmThreads' (keeps per-file isolation) or isolate: false (shares it across files)
+             learn more: https://vitest.dev/guide/improving-performance#test-environments
+

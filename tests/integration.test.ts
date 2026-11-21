@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import request from 'supertest';
+import sharp from 'sharp';
 import { createApp } from '../src/server/app';
 import type { AppConfig } from '../src/server/config';
 import type { TokenVerifier } from '../src/server/auth';
@@ -445,6 +446,11 @@ describe('CivicResolve Express API Integration Tests', () => {
 
   it('covers valid optional fields, admin update variants, and same-host CORS', async () => {
     const store = new InMemoryCivicStore();
+    const imageBuffer = await sharp({
+      create: { width: 8, height: 8, channels: 3, background: { r: 40, g: 90, b: 140 } },
+    })
+      .png()
+      .toBuffer();
     const app = createApp({
       config: TEST_CONFIG,
       verifyToken: verifyTestToken,
@@ -464,9 +470,12 @@ describe('CivicResolve Express API Integration Tests', () => {
         language: 'en',
         latitude: 13.006,
         longitude: 80.257,
+        imageDataUrl: `data:image/png;base64,${imageBuffer.toString('base64')}`,
       });
     expect(created.status).toBe(201);
     const complaintId = created.body.complaint.id as string;
+    expect(created.body.complaint.hasImage).toBe(true);
+    expect(created.body.complaint.imageDataUrl).toMatch(/^data:image\/png;base64,/);
     expect(created.body.complaint.latitude).toBe(13.006);
     expect(created.body.complaint.longitude).toBe(80.257);
 
