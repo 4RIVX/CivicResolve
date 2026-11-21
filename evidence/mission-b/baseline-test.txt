@@ -1,0 +1,14 @@
+$ vitest run
+
+ RUN  v5.1.1 /workspaces/CivicResolve
+
+
+ Test Files  12 passed | 1 skipped (13)
+      Tests  43 passed | 2 skipped (45)
+   Start at  10:09:32
+   Duration  20.73s (environment 43%, import 26%, tests 20%, setup 6%, transform 4%, worker 1%)
+
+Environment  jsdom was created 13 times · 8.02s total, 43% of tracked time
+             create it once per worker with pool: 'vmThreads' (keeps per-file isolation) or isolate: false (shares it across files)
+             learn more: https://vitest.dev/guide/improving-performance#test-environments
+

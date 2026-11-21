@@ -7,9 +7,10 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./tests/setup.ts'],
     include: ['tests/**/*.test.ts', 'tests/**/*.test.tsx'],
+    exclude: ['tests/firestore.emulator.test.ts'],
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'json-summary'],
+      reporter: ['text', 'json-summary', 'lcov'],
       include: ['src/shared/**/*.ts', 'src/server/**/*.ts', 'src/components/**/*.tsx'],
     },
   },

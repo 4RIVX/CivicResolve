@@ -1,0 +1,14 @@
+$ vitest run tests/unit.test.ts tests/imageSecurity.test.ts tests/promptInjection.test.ts tests/geminiService.test.ts tests/publicStatsCache.test.ts tests/firestoreAdminStore.test.ts tests/firestoreRestClient.test.ts
+
+ RUN  v5.1.1 /workspaces/CivicResolve
+
+
+ Test Files  7 passed (7)
+      Tests  25 passed (25)
+   Start at  10:12:31
+   Duration  9.90s (environment 50%, import 27%, tests 12%, setup 6%, transform 5%, worker 1%)
+
+Environment  jsdom was created 7 times · 4.42s total, 50% of tracked time
+             create it once per worker with pool: 'vmThreads' (keeps per-file isolation) or isolate: false (shares it across files)
+             learn more: https://vitest.dev/guide/improving-performance#test-environments
+

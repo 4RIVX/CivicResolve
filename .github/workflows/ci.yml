@@ -55,6 +55,12 @@ jobs:
       - name: Unit, integration, accessibility and security tests
         run: bun run test
 
+      - name: Unit tests
+        run: bun run test:unit
+
+      - name: Integration and security tests
+        run: bun run test:integration && bun run test:security
+
       - name: Test coverage
         run: bun run test:coverage
 

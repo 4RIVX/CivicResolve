@@ -10,8 +10,12 @@
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
     "test": "vitest run",
-    "test:coverage": "vitest run --coverage",
-    "test:emulator": "firebase emulators:exec --only firestore \"vitest run tests/firestore.emulator.test.ts\"",
+    "test:unit": "vitest run tests/unit.test.ts tests/imageSecurity.test.ts tests/promptInjection.test.ts tests/geminiService.test.ts tests/publicStatsCache.test.ts tests/firestoreAdminStore.test.ts tests/firestoreRestClient.test.ts",
+    "test:integration": "vitest run tests/integration.test.ts tests/missionB.test.ts tests/rateLimitAndCors.test.ts tests/securityRegression.test.ts tests/firestore.rules.test.ts",
+    "test:security": "vitest run tests/securityRegression.test.ts tests/rateLimitAndCors.test.ts tests/promptInjection.test.ts tests/imageSecurity.test.ts tests/firestore.rules.test.ts",
+    "test:emulator": "firebase emulators:exec --only firestore --project civicresolve-emulator-test \"vitest run tests/firestore.emulator.test.ts\"",
+    "test:coverage": "vitest run --coverage && bun run check:coverage",
+    "check:coverage": "node scripts/check-coverage.mjs",
     "lint": "tsc --noEmit && npx eslint firestore.rules eslint.config.mjs",
     "typecheck": "tsc --noEmit"
   },
@@ -57,6 +61,7 @@
     "@vitest/coverage-v8": "^5.1.1",
     "autoprefixer": "^10.4.21",
     "esbuild": "^0.25.0",
+    "firebase-tools": "^15.37.0",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.21.0",
     "typescript": "^7.0.2"

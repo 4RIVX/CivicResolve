@@ -120,6 +120,102 @@ function createMockAdminFirestore() {
 }
 
 describe('Phase 2: Server-Side Transactional Public Statistics & FirestoreAdminStore', () => {
+  it('sanitizes malformed public stats and handles every status, priority, department transition', () => {
+    const base = sanitizePublicStats({
+      totalReported: -10,
+      reportedCount: Number.NaN,
+      inProgressCount: 'bad',
+      resolvedCount: Infinity,
+      criticalCount: 2,
+      resolutionRate: 150,
+      avgResolutionHours: -5,
+      byCategory: { STREETLIGHTS: -1 },
+      byPriority: { HIGH: 2 },
+      byDepartment: { ELECTRICAL_LIGHTING: -3 },
+      byArea: { Adyar: 'bad' },
+      monthlyTrends: [
+        { month: '2026-11', reported: 3, resolved: 1 },
+        { month: '', reported: 1, resolved: 0 },
+      ],
+      updatedAt: '',
+    } as unknown as Partial<ReturnType<typeof sanitizePublicStats>>);
+    expect(base.totalReported).toBe(0);
+    expect(base.reportedCount).toBe(0);
+    expect(base.resolutionRate).toBe(100);
+    expect(base.avgResolutionHours).toBe(0);
+    expect(base.byCategory.STREETLIGHTS).toBe(0);
+    expect(base.monthlyTrends).toHaveLength(1);
+    expect(sanitizePublicStats(null).totalReported).toBe(0);
+
+    const existing = {
+      status: 'IN_PROGRESS' as const,
+      priority: 'CRITICAL' as const,
+      assignedDepartment: 'PUBLIC_SAFETY_ENFORCEMENT' as const,
+      createdAt: '2026-10-10T10:00:00.000Z',
+    };
+    const updated = applyComplaintUpdateToStats(
+      {
+        totalReported: 1,
+        reportedCount: 0,
+        inProgressCount: 1,
+        resolvedCount: 0,
+        criticalCount: 1,
+        byPriority: { CRITICAL: 1, HIGH: 0 },
+        byDepartment: { PUBLIC_SAFETY_ENFORCEMENT: 1 },
+        monthlyTrends: [],
+      },
+      existing,
+      {
+        status: 'RESOLVED',
+        priority: 'HIGH',
+        assignedDepartment: 'ELECTRICAL_LIGHTING',
+      },
+      '2026-11-21T12:00:00.000Z'
+    );
+    expect(updated.resolvedCount).toBe(1);
+    expect(updated.inProgressCount).toBe(0);
+    expect(updated.criticalCount).toBe(0);
+    expect(updated.byDepartment.PUBLIC_SAFETY_ENFORCEMENT).toBeUndefined();
+    expect(updated.byDepartment.ELECTRICAL_LIGHTING).toBe(1);
+    expect(updated.monthlyTrends[0]).toEqual({
+      month: '2026-10',
+      reported: 1,
+      resolved: 1,
+    });
+
+    const sameState = applyComplaintUpdateToStats(
+      updated,
+      {
+        status: 'RESOLVED',
+        priority: 'HIGH',
+        assignedDepartment: 'ELECTRICAL_LIGHTING',
+        createdAt: '2026-10-10T10:00:00.000Z',
+      },
+      {
+        status: 'RESOLVED',
+        priority: 'HIGH',
+        assignedDepartment: 'ELECTRICAL_LIGHTING',
+      }
+    );
+    expect(sameState.resolvedCount).toBe(1);
+
+    const existingMonth = applyComplaintCreateToStats(
+      {
+        ...sanitizePublicStats(null),
+        monthlyTrends: [{ month: '2026-11', reported: 2, resolved: 1 }],
+      },
+      {
+        userCategory: 'WATER_SUPPLY',
+        priority: 'CRITICAL',
+        assignedDepartment: 'WATER_RESOURCES',
+        area: 'Adyar',
+      },
+      '2026-11-21T12:00:00.000Z'
+    );
+    expect(existingMonth.monthlyTrends[0].reported).toBe(3);
+    expect(existingMonth.byArea.Adyar).toBe(1);
+  });
+
   it('computes transactional create and update publicStats transitions and strips stray PII keys', () => {
     const dirty = {
       totalReported: 1,
@@ -296,5 +392,97 @@ describe('Phase 2: Server-Side Transactional Public Statistics & FirestoreAdminS
     expect(notes.length).toBe(1);
     expect(logs.length).toBe(3);
     expect(listCitizen.total).toBe(1);
+  });
+
+  it('covers missing documents, fallback aggregation, reconciliation, and transaction failures', async () => {
+    const { db, store } = createMockAdminFirestore();
+    const adminStore = new FirestoreAdminStore('test-proj', '(default)', db);
+
+    await expect(adminStore.getComplaintById('unused', 'missing')).resolves.toBeNull();
+    await expect(adminStore.getStatusHistory('unused', 'missing')).resolves.toEqual([]);
+    await expect(adminStore.getAdminNotes('unused', 'missing')).resolves.toEqual([]);
+    await expect(adminStore.listRecentComplaintsForDuplicateCheck('unused', 'uid-a', false)).resolves.toEqual([]);
+    await expect(adminStore.listRecentComplaintsForDuplicateCheck('unused', 'uid-a', true)).resolves.toEqual([]);
+
+    const fallback = await adminStore.getPublicAggregateStats();
+    expect(fallback.totalReported).toBe(0);
+
+    await adminStore.reconcilePublicStats('unused', {
+      ...createEmptyPublicStats(),
+      totalReported: 2,
+      reportedCount: 2,
+      byArea: { Adyar: 2 },
+    });
+    expect(store.has('publicStats/aggregate')).toBe(true);
+    const reconciled = await adminStore.getPublicAggregateStats();
+    expect(reconciled.totalReported).toBe(2);
+    expect(reconciled.byArea.Adyar).toBe(2);
+
+    const failingDb: any = {
+      collection: () => ({
+        doc: () => ({
+          id: 'cmp_failed',
+          collection: () => ({ doc: () => ({ id: 'history_failed' }) }),
+        }),
+      }),
+      runTransaction: async () => {
+        throw new Error('transaction aborted');
+      },
+    };
+    const failingStore = new FirestoreAdminStore('test-proj', '(default)', failingDb);
+    await expect(
+      failingStore.createComplaintWithRecords({
+        idToken: 'unused',
+        complaint: {
+          referenceId: 'CR-2026-FAIL01',
+          citizenUid: 'uid-a',
+          citizenEmail: 'a@example.com',
+          citizenName: 'A',
+          title: 'Database failure test',
+          description: 'This description verifies transaction rollback behavior.',
+          location: 'Adyar',
+          area: 'Adyar',
+          hasImage: false,
+          userCategory: 'OTHER',
+          language: 'en',
+          status: 'REPORTED',
+          priority: 'MEDIUM',
+          severity: 3,
+          department: 'GENERAL_MUNICIPAL_DESK',
+          assignedDepartment: 'GENERAL_MUNICIPAL_DESK',
+          subcategory: 'GENERAL_ISSUE',
+          aiSource: 'FALLBACK',
+          aiModel: 'fallback',
+          aiExplanation: 'Fallback',
+          publicImpact: 'Impact',
+          recommendedAction: 'Inspect',
+          confidenceEstimate: 0.45,
+          safetyEscalated: false,
+          safetyReasons: [],
+          requiresHumanReview: true,
+          citizenVisibleUpdate: 'Received',
+          potentialDuplicateIds: [],
+          duplicateScore: 0,
+          isDemo: false,
+        },
+        initialHistory: {
+          previousStatus: 'NONE',
+          newStatus: 'REPORTED',
+          changedByUid: 'uid-a',
+          changedByRole: 'CITIZEN',
+          note: 'Submitted',
+          citizenVisible: true,
+        },
+        auditLog: {
+          action: 'COMPLAINT_SUBMITTED',
+          actorUid: 'uid-a',
+          actorEmail: 'a@example.com',
+          actorRole: 'CITIZEN',
+          targetType: 'COMPLAINT',
+          targetId: 'CR-2026-FAIL01',
+          details: 'Submitted',
+        },
+      })
+    ).rejects.toThrow('transaction aborted');
   });
 });
