@@ -10,13 +10,59 @@ import {
 import { createEmptyPublicStats } from '../src/server/services/firestoreRestClient';
 import type { ComplaintRecord } from '../src/shared/types';
 
+type MockDocumentData = Record<string, unknown>;
+
+interface MockDocumentSnapshot {
+  id: string;
+  exists: boolean;
+  data(): MockDocumentData | undefined;
+}
+
+interface MockDocumentReference {
+  id: string;
+  path: string;
+  collection(name: string): MockCollectionReference;
+  get(): Promise<MockDocumentSnapshot>;
+  set(data: MockDocumentData): Promise<void>;
+}
+
+interface MockCollectionSnapshot {
+  docs: MockDocumentSnapshot[];
+}
+
+interface MockCollectionReference {
+  where(field: string, operation: string, value: unknown): MockCollectionReference;
+  orderBy(): MockCollectionReference;
+  limit(count: number): MockCollectionReference;
+  get(): Promise<MockCollectionSnapshot>;
+  doc(id?: string): MockDocumentReference;
+}
+
+interface MockTransaction {
+  get(ref: MockDocumentReference): Promise<MockDocumentSnapshot>;
+  create(ref: MockDocumentReference, data: MockDocumentData): void;
+  set(ref: MockDocumentReference, data: MockDocumentData): void;
+  update(ref: MockDocumentReference, data: MockDocumentData): void;
+}
+
+interface MockFirestore {
+  collection(name: string): MockCollectionReference;
+  runTransaction<T>(update: (transaction: MockTransaction) => Promise<T>): Promise<T>;
+}
+
+function asTestFirestore(firestore: MockFirestore): Firestore {
+  // The fake models only the collection and transaction methods used by these tests.
+  return firestore as unknown as Firestore;
+}
+
 function createMockAdminFirestore() {
   const store = new Map<string, Record<string, unknown>>();
   let idSeq = 1;
 
-  function makeDocRef(path: string): any {
+  function makeDocRef(path: string): MockDocumentReference {
+    const id = path.slice(path.lastIndexOf('/') + 1);
     return {
-      id: path.split('/').pop()!,
+      id,
       path,
       collection(sub: string) {
         return makeCollectionRef(`${path}/${sub}`);
@@ -24,7 +70,7 @@ function createMockAdminFirestore() {
       async get() {
         const data = store.get(path);
         return {
-          id: path.split('/').pop()!,
+          id,
           exists: Boolean(data),
           data: () => (data ? { ...data } : undefined),
         };
@@ -39,29 +85,25 @@ function createMockAdminFirestore() {
     colPath: string,
     filters: Array<{ field: string; value: unknown }> = [],
     limit = 500
-  ): any {
-    const queryObj: any = {
-      _filters: filters,
-      _limit: limit,
+  ): MockCollectionReference {
+    return {
       where(field: string, _op: string, value: unknown) {
-        return makeCollectionRef(colPath, [...queryObj._filters, { field, value }], queryObj._limit);
+        return makeCollectionRef(colPath, [...filters, { field, value }], limit);
       },
       orderBy() {
-        return makeCollectionRef(colPath, queryObj._filters, queryObj._limit);
+        return makeCollectionRef(colPath, filters, limit);
       },
       limit(n: number) {
-        return makeCollectionRef(colPath, queryObj._filters, n);
+        return makeCollectionRef(colPath, filters, n);
       },
       async get() {
         const prefix = `${colPath}/`;
-        const docs: any[] = [];
+        const docs: MockDocumentSnapshot[] = [];
         for (const [k, v] of store.entries()) {
           if (!k.startsWith(prefix)) continue;
           const rest = k.slice(prefix.length);
           if (rest.includes('/')) continue;
-          const matches = queryObj._filters.every(
-            (f: { field: string; value: unknown }) => v[f.field] === f.value
-          );
+          const matches = filters.every((filter) => v[filter.field] === filter.value);
           if (matches) {
             docs.push({
               id: rest,
@@ -70,18 +112,17 @@ function createMockAdminFirestore() {
             });
           }
         }
-        return { docs: docs.slice(0, queryObj._limit) };
+        return { docs: docs.slice(0, limit) };
       },
       doc(id?: string) {
         const docId = id ?? `adm_${idSeq++}`;
         return makeDocRef(`${colPath}/${docId}`);
       },
     };
-    return queryObj;
   }
 
-  function materializeFields(data: Record<string, unknown>, now: string): Record<string, unknown> {
-    const out: Record<string, unknown> = { ...data };
+  function materializeFields(data: MockDocumentData, now: string): MockDocumentData {
+    const out: MockDocumentData = { ...data };
     for (const [k, v] of Object.entries(out)) {
       if (
         v &&
@@ -94,29 +135,29 @@ function createMockAdminFirestore() {
     return out;
   }
 
-  const db: any = {
+  const db: MockFirestore = {
     collection: (name: string) => makeCollectionRef(name),
-    async runTransaction(fn: (tx: any) => Promise<void>) {
+    async runTransaction<T>(fn: (tx: MockTransaction) => Promise<T>) {
       const tx = {
-        async get(ref: any) {
+        async get(ref: MockDocumentReference) {
           return ref.get();
         },
-        create(ref: any, data: Record<string, unknown>) {
+        create(ref: MockDocumentReference, data: MockDocumentData) {
           store.set(ref.path, materializeFields(data, new Date().toISOString()));
         },
-        set(ref: any, data: Record<string, unknown>) {
+        set(ref: MockDocumentReference, data: MockDocumentData) {
           store.set(ref.path, materializeFields(data, new Date().toISOString()));
         },
-        update(ref: any, data: Record<string, unknown>) {
+        update(ref: MockDocumentReference, data: MockDocumentData) {
           const prev = store.get(ref.path) ?? {};
           store.set(ref.path, { ...prev, ...materializeFields(data, new Date().toISOString()) });
         },
       };
-      await fn(tx);
+      return fn(tx);
     },
   };
 
-  return { db: db as Firestore, store };
+  return { db: asTestFirestore(db), mockDb: db, store };
 }
 
 describe('Phase 2: Server-Side Transactional Public Statistics & FirestoreAdminStore', () => {
@@ -462,18 +503,18 @@ describe('Phase 2: Server-Side Transactional Public Statistics & FirestoreAdminS
     expect(reconciled.totalReported).toBe(2);
     expect(reconciled.byArea.Adyar).toBe(2);
 
-    const failingDb: any = {
-      collection: () => ({
-        doc: () => ({
-          id: 'cmp_failed',
-          collection: () => ({ doc: () => ({ id: 'history_failed' }) }),
-        }),
-      }),
+    const { mockDb } = createMockAdminFirestore();
+    const failingDb: MockFirestore = {
+      ...mockDb,
       runTransaction: async () => {
         throw new Error('transaction aborted');
       },
     };
-    const failingStore = new FirestoreAdminStore('test-proj', '(default)', failingDb);
+    const failingStore = new FirestoreAdminStore(
+      'test-proj',
+      '(default)',
+      asTestFirestore(failingDb)
+    );
     await expect(
       failingStore.createComplaintWithRecords({
         idToken: 'unused',

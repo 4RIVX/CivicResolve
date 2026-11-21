@@ -1,0 +1,6 @@
+COMMAND=bun audit
+bun audit v1.4.5 (a7733435c)
+
+No vulnerabilities found (checked 894 packages) [295.00ms]
+
+EXIT_CODE=0

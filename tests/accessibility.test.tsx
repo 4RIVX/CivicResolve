@@ -29,9 +29,7 @@ vi.mock('../src/lib/firebase', () => ({
       return mockAuthState.currentUser;
     },
   },
-  db: {},
   googleProvider: {},
-  testConnection: vi.fn(),
 }));
 
 vi.mock('firebase/auth', () => ({

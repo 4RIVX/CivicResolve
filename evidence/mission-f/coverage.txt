@@ -1,0 +1,54 @@
+COMMAND=bun run test:coverage
+$ vitest run --coverage && bun run check:coverage
+
+ RUN  v5.1.1 /workspaces/CivicResolve
+      Coverage enabled with v8
+
+
+ Test Files  14 passed (14)
+      Tests  61 passed (61)
+   Start at  11:44:38
+   Duration  38.70s (environment 42%, import 29%, tests 19%, setup 6%, worker 3%, transform 2%)
+
+Environment  jsdom was created 14 times · 13.87s total, 42% of tracked time
+             create it once per worker with pool: 'vmThreads' (keeps per-file isolation) or isolate: false (shares it across files)
+             learn more: https://vitest.dev/guide/improving-performance#test-environments
+
+[34m % [39m[2mCoverage report from [22m[33mv8[39m
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   91.83 |    85.61 |   89.32 |   92.51 |                   
+ components        |   77.55 |    78.26 |   58.82 |   79.16 |                   
+  ...rBoundary.tsx |   91.66 |       70 |      75 |   91.66 | 47                
+  Layout.tsx       |   56.52 |    73.07 |   45.45 |   59.09 | 57-61,125-154     
+ components/charts |     100 |     82.6 |     100 |     100 |                   
+  CivicCharts.tsx  |     100 |     82.6 |     100 |     100 | 86-98,168-173     
+ server            |   91.86 |    86.72 |     100 |   91.66 |                   
+  app.ts           |   90.62 |    85.43 |     100 |   90.43 | ...47,762,874,902 
+  auth.ts          |      96 |    88.67 |     100 |   95.83 | 27,31             
+  config.ts        |   96.15 |    89.18 |     100 |      96 | 30                
+ server/services   |   93.75 |    83.51 |   86.36 |   95.45 |                   
+  ...AdminStore.ts |   94.56 |     61.7 |      84 |   94.31 | 39-43,163-164,180 
+  ...RestClient.ts |   91.56 |       80 |   84.61 |   94.85 | ...64,573,587,734 
+  geminiService.ts |      94 |       95 |   81.81 |   93.75 | 81,89-90          
+  ...StatsCache.ts |     100 |       80 |     100 |     100 | 18,43-54          
+  ...cStatsMath.ts |   97.29 |    94.48 |     100 |   98.43 | 61                
+ server/utils      |   90.16 |    87.14 |     100 |      90 |                   
+  imageSecurity.ts |   90.16 |    87.14 |     100 |      90 | ...14,161-164,168 
+ shared            |   90.17 |    92.79 |     100 |   90.36 |                   
+  ...eDetection.ts |   95.16 |    90.24 |     100 |   96.49 | 128-129           
+  safetyRules.ts   |   84.09 |    94.02 |     100 |    83.9 | ...73-276,278-281 
+-------------------|---------|----------|---------|---------|-------------------
+
+=============================== Coverage summary ===============================
+Statements   : 91.83% ( 1023/1114 )
+Branches     : 85.61% ( 732/855 )
+Functions    : 89.32% ( 159/178 )
+Lines        : 92.51% ( 976/1055 )
+================================================================================
+$ node scripts/check-coverage.mjs
+src/server: statements=92.78%, branches=85.04%, functions=91.24%, lines=93.57%
+src/shared: statements=90.17%, branches=92.79%, functions=100.00%, lines=90.36%
+
+EXIT_CODE=0

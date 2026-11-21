@@ -61,4 +61,6 @@ bun run test                   # Run unit, integration, accessibility, and Fires
 bunx playwright install chromium  # Install the browser used by real-browser tests
 bun run test:e2e               # Run Chromium accessibility and routing tests
 bun run test:emulator          # Run Firestore rules tests (Java 21 required)
+bun run test:coverage          # Run Vitest coverage and enforce Mission B thresholds
+bun audit                      # Audit the Bun dependency lock for known vulnerabilities
 ```

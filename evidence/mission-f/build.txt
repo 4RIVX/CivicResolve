@@ -1,0 +1,28 @@
+COMMAND=bun run build
+$ vite build
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - `__dirname` (vite.config.ts:22:40). Use `import.meta.dirname` instead
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+vite v8.3.8 building client environment for production...
+transforming...
+✓ 1796 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                     1.53 kB │ gzip:   0.67 kB
+dist/assets/index-DBpuuvTm.css                     34.30 kB │ gzip:   7.07 kB
+dist/assets/arrow-left-qZz4MDW_.js                  0.15 kB │ gzip:   0.15 kB
+dist/assets/search-V94C_QF_.js                      0.30 kB │ gzip:   0.22 kB
+dist/assets/LoginPage-BxstwSS6.js                   1.77 kB │ gzip:   0.87 kB
+dist/assets/StatusBadges-BbuKAoLi.js                3.21 kB │ gzip:   0.86 kB
+dist/assets/PublicTransparencyPage-BhNblbm5.js      4.52 kB │ gzip:   1.57 kB
+dist/assets/CivicCharts-C6fIOg2c.js                 5.12 kB │ gzip:   1.55 kB
+dist/assets/ComplaintDetailPage-J5Fv9XR2.js         7.54 kB │ gzip:   2.07 kB
+dist/assets/CitizenDashboardPage-CykNAzc7.js        9.31 kB │ gzip:   2.33 kB
+dist/assets/AdminComplaintReviewPage-W2aNLfAg.js   11.81 kB │ gzip:   3.08 kB
+dist/assets/AdminDashboardPage-fSYEmx7P.js         12.71 kB │ gzip:   3.29 kB
+dist/assets/CitizenReportPage-DuBA4Er8.js         103.07 kB │ gzip:  29.29 kB
+dist/assets/index-C7dTWsW0.js                     407.55 kB │ gzip: 125.25 kB
+
+✓ built in 5.85s
+
+EXIT_CODE=0
