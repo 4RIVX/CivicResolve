@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Firestore } from 'firebase-admin/firestore';
+import { Timestamp } from 'firebase-admin/firestore';
 import { FirestoreAdminStore } from '../src/server/services/firestoreAdminStore';
 import {
   applyComplaintCreateToStats,
@@ -33,24 +34,22 @@ function createMockAdminFirestore() {
     };
   }
 
-  function makeCollectionRef(colPath: string): any {
+  function makeCollectionRef(
+    colPath: string,
+    filters: Array<{ field: string; value: unknown }> = [],
+    limit = 500
+  ): any {
     const queryObj: any = {
-      _filters: [] as Array<{ field: string; value: unknown }>,
-      _limit: 500,
+      _filters: filters,
+      _limit: limit,
       where(field: string, _op: string, value: unknown) {
-        return {
-          ...queryObj,
-          _filters: [...queryObj._filters, { field, value }],
-        };
+        return makeCollectionRef(colPath, [...queryObj._filters, { field, value }], queryObj._limit);
       },
       orderBy() {
-        return queryObj;
+        return makeCollectionRef(colPath, queryObj._filters, queryObj._limit);
       },
       limit(n: number) {
-        return {
-          ...queryObj,
-          _limit: n,
-        };
+        return makeCollectionRef(colPath, queryObj._filters, n);
       },
       async get() {
         const prefix = `${colPath}/`;
@@ -296,5 +295,49 @@ describe('Phase 2: Server-Side Transactional Public Statistics & FirestoreAdminS
     expect(notes.length).toBe(1);
     expect(logs.length).toBe(3);
     expect(listCitizen.total).toBe(1);
+  });
+
+  it('handles missing documents, admin query variants, Firestore timestamps, and derived public stats', async () => {
+    const { db, store } = createMockAdminFirestore();
+    const createdAt = '2026-11-20T10:00:00.000Z';
+    store.set('complaints/cmp_timestamp', {
+      citizenUid: 'uid-c1',
+      status: 'RESOLVED',
+      priority: 'HIGH',
+      userCategory: 'ROAD_INFRASTRUCTURE',
+      assignedDepartment: 'ROADS_PUBLIC_WORKS',
+      area: 'Adyar',
+      createdAt: Timestamp.fromDate(new Date(createdAt)),
+      resolvedAt: { toDate: () => new Date('2026-11-20T12:00:00.000Z') },
+    });
+
+    const adminStore = new FirestoreAdminStore('test-proj', '(default)', db);
+    expect(await adminStore.getComplaintById('unused', 'missing')).toBeNull();
+
+    const complaint = await adminStore.getComplaintById('unused', 'cmp_timestamp');
+    expect(complaint?.createdAt).toBe(createdAt);
+    expect(complaint?.resolvedAt).toBe('2026-11-20T12:00:00.000Z');
+
+    const allComplaints = await adminStore.listComplaints('unused', { page: 1, pageSize: 10 });
+    expect(allComplaints.total).toBe(1);
+    expect(
+      (await adminStore.listComplaints('unused', {
+        citizenUid: 'uid-other',
+        page: 1,
+        pageSize: 10,
+      })).total
+    ).toBe(0);
+
+    expect((await adminStore.listRecentComplaintsForDuplicateCheck('unused', 'uid-c1', false))).toHaveLength(1);
+    expect((await adminStore.listRecentComplaintsForDuplicateCheck('unused', 'uid-other', false))).toHaveLength(0);
+    expect((await adminStore.listRecentComplaintsForDuplicateCheck('unused', 'uid-other', true))).toHaveLength(1);
+    expect(await adminStore.getStatusHistory('unused', 'cmp_timestamp')).toEqual([]);
+    expect(await adminStore.getAdminNotes('unused', 'cmp_timestamp')).toEqual([]);
+    expect(await adminStore.listAuditLogs('unused')).toEqual([]);
+
+    const derivedStats = await adminStore.getPublicAggregateStats();
+    expect(derivedStats.totalReported).toBe(1);
+    expect(derivedStats.resolvedCount).toBe(1);
+    expect(derivedStats.avgResolutionHours).toBe(2);
   });
 });

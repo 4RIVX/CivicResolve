@@ -442,4 +442,134 @@ describe('CivicResolve Express API Integration Tests', () => {
     expect(submitRes.body.analysis.source).toBe('FALLBACK');
     expect(submitRes.body.analysis.requiresHumanReview).toBe(true);
   });
+
+  it('covers valid optional fields, admin update variants, and same-host CORS', async () => {
+    const store = new InMemoryCivicStore();
+    const app = createApp({
+      config: TEST_CONFIG,
+      verifyToken: verifyTestToken,
+      dataStore: store,
+      geminiClient: geminiMock,
+      disableRateLimit: true,
+    });
+
+    const created = await request(app)
+      .post('/api/complaints')
+      .set('Authorization', 'Bearer token-citizen-a')
+      .send({
+        title: 'Overflowing garbage bins near city library',
+        description: 'Several bins have overflowed onto the footpath outside the public library.',
+        location: 'Library Road, Adyar',
+        userCategory: 'GARBAGE_WASTE',
+        language: 'en',
+        latitude: 13.006,
+        longitude: 80.257,
+      });
+    expect(created.status).toBe(201);
+    const complaintId = created.body.complaint.id as string;
+    expect(created.body.complaint.latitude).toBe(13.006);
+    expect(created.body.complaint.longitude).toBe(80.257);
+
+    store.history.set(complaintId, [
+      ...(store.history.get(complaintId) ?? []),
+      {
+        id: 'hidden-history',
+        complaintId,
+        previousStatus: 'REPORTED',
+        newStatus: 'IN_PROGRESS',
+        changedByUid: 'uid-admin',
+        changedByRole: 'ADMIN',
+        note: 'Internal operational note.',
+        citizenVisible: false,
+        createdAt: new Date().toISOString(),
+      },
+    ]);
+
+    const citizenDetail = await request(app)
+      .get(`/api/complaints/${complaintId}`)
+      .set('Authorization', 'Bearer token-citizen-a');
+    expect(citizenDetail.status).toBe(200);
+    expect(citizenDetail.body.history).toHaveLength(1);
+
+    const invalidImage = await request(app)
+      .post('/api/ai/analyze')
+      .set('Authorization', 'Bearer token-citizen-a')
+      .send({
+        title: 'Broken streetlight near library',
+        description: 'The light has been broken for three days beside the library.',
+        location: 'Library Road, Adyar',
+        userCategory: 'STREETLIGHTS',
+        language: 'en',
+        imageDataUrl: `data:image/png;base64,${Buffer.from('not a PNG image').toString('base64')}`,
+      });
+    expect(invalidImage.status).toBe(400);
+    expect(invalidImage.body.error).toContain('binary signature');
+
+    const citizenList = await request(app)
+      .get('/api/complaints?page=not-a-number&pageSize=also-invalid')
+      .set('Authorization', 'Bearer token-citizen-a');
+    expect(citizenList.status).toBe(200);
+    expect(citizenList.body.page).toBe(1);
+    expect(citizenList.body.pageSize).toBe(10);
+
+    const adminQueue = await request(app)
+      .get('/api/admin/complaints?sortBy=severity&search=Library&category=GARBAGE_WASTE&status=REPORTED')
+      .set('Authorization', 'Bearer token-admin');
+    expect(adminQueue.status).toBe(200);
+    expect(adminQueue.body.items).toHaveLength(1);
+
+    const updateWithEveryOptionalField = await request(app)
+      .patch(`/api/admin/complaints/${complaintId}`)
+      .set('Authorization', 'Bearer token-admin')
+      .send({
+        status: 'IN_PROGRESS',
+        priority: 'LOW',
+        assignedDepartment: 'SANITATION_WASTE',
+        citizenVisibleUpdate: 'A sanitation crew has been assigned.',
+        requiresHumanReview: false,
+        statusNote: 'Crew dispatched.',
+      });
+    expect(updateWithEveryOptionalField.status).toBe(200);
+    expect(updateWithEveryOptionalField.body.complaint.status).toBe('IN_PROGRESS');
+    expect(updateWithEveryOptionalField.body.complaint.assignedDepartment).toBe('SANITATION_WASTE');
+
+    const updateWithoutStatus = await request(app)
+      .patch(`/api/admin/complaints/${complaintId}`)
+      .set('Authorization', 'Bearer token-admin')
+      .send({ requiresHumanReview: true });
+    expect(updateWithoutStatus.status).toBe(200);
+    expect(updateWithoutStatus.body.complaint.requiresHumanReview).toBe(true);
+
+    expect(
+      (await request(app)
+        .post(`/api/admin/complaints/${complaintId}/notes`)
+        .set('Authorization', 'Bearer token-admin')
+        .send({ note: '' })).status
+    ).toBe(400);
+    expect(
+      (await request(app)
+        .patch('/api/admin/complaints/missing_id')
+        .set('Authorization', 'Bearer token-admin')
+        .send({ status: 'RESOLVED' })).status
+    ).toBe(404);
+    expect(
+      (await request(app)
+        .get('/api/admin/complaints/missing_id')
+        .set('Authorization', 'Bearer token-admin')).status
+    ).toBe(404);
+
+    const sameHostApp = createApp({
+      config: { ...TEST_CONFIG, allowedOrigins: new Set() },
+      verifyToken: verifyTestToken,
+      dataStore: new InMemoryCivicStore(),
+      geminiClient: geminiMock,
+      disableRateLimit: true,
+    });
+    const sameHost = await request(sameHostApp)
+      .get('/api/health')
+      .set('Host', 'civicresolve.example')
+      .set('Origin', 'https://civicresolve.example');
+    expect(sameHost.status).toBe(200);
+    expect(sameHost.headers['access-control-allow-origin']).toBe('https://civicresolve.example');
+  });
 });
