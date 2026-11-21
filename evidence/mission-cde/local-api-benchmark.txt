@@ -1,0 +1,24 @@
+{
+  "scope": "in-process Express + supertest; no network, Firestore, or Gemini; dataStore is an in-memory stub",
+  "mockStoreReadsForCachedEndpoints": 1,
+  "routes": {
+    "/api/health": {
+      "samples": 200,
+      "p50_ms": 2.376,
+      "p95_ms": 3.209,
+      "p99_ms": 4.658
+    },
+    "/api/public/statistics": {
+      "samples": 200,
+      "p50_ms": 2.245,
+      "p95_ms": 6.069,
+      "p99_ms": 13.039
+    },
+    "/api/public/trends": {
+      "samples": 200,
+      "p50_ms": 1.848,
+      "p95_ms": 2.917,
+      "p99_ms": 4.177
+    }
+  }
+}

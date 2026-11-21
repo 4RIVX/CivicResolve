@@ -2,7 +2,7 @@
 
 **Tagline:** *Report. Track. Resolve.*
 
-CivicResolve is a production-ready civic technology platform built for Google AI Studio Build Mode and deployment on Google Cloud Run. It pairs Firebase Authentication, Cloud Firestore, and server-side Google Gemini Flash intelligence with deterministic safety rules to help citizens report local infrastructure issues in English or Tamil without guessing government department structures.
+CivicResolve is a civic technology platform designed for Google AI Studio Build Mode and Google Cloud Run. It pairs Firebase Authentication, Cloud Firestore, and server-side Google Gemini Flash intelligence with deterministic safety rules to help citizens report local infrastructure issues in English or Tamil without guessing government department structures.
 
 ## Core Modules
 1. **Landing & Bilingual Experience (`/`):** Explains the civic grievance problem, 3-step workflow, AI safeguards, and live anonymized impact metrics with instant English / Tamil (`EN / தமிழ்`) switching.
@@ -13,9 +13,9 @@ CivicResolve is a production-ready civic technology platform built for Google AI
 ## Technology Stack
 - **Frontend:** React 19, TypeScript, Vite 8, Tailwind CSS v4, React Router, Lucide Icons
 - **Backend:** Node.js, Express 4, Zod, Helmet, `express-rate-limit`
-- **Database & Auth:** Cloud Firestore + Firebase Authentication (`firebase` client SDK + `firebase-admin/auth` ID token verification + Firestore REST API obeying `firestore.rules`)
+- **Database & Auth:** Cloud Firestore + Firebase Authentication (`firebase` client SDK + `firebase-admin` ID token verification and server-side Firestore access; `firestore.rules` govern client SDK access)
 - **AI Engine:** Official `@google/genai` SDK (`gemini-4-hydrogen` configurable via `GEMINI_MODEL`) + deterministic backend safety rules + rule-based fallback
-- **Testing:** Vitest, Supertest, React Testing Library, `axe-core`, `playwright-cli`, ESLint (`@firebase/eslint-plugin-security-rules`)
+- **Testing:** Vitest, Supertest, React Testing Library, `axe-core`, Playwright Chromium, ESLint (`@firebase/eslint-plugin-security-rules`)
 
 ## Environment Configuration
 Copy `.env.example` for local/Cloud Run environments (never commit secrets):
@@ -25,9 +25,7 @@ Copy `.env.example` for local/Cloud Run environments (never commit secrets):
 - `PORT` — HTTP listening port (defaults to `3000`; Cloud Run injects `PORT`).
 
 ## Administrator Setup
-Administrator privileges are **never** accepted from client payloads or profile fields. To authorize administrators:
-1. Configure `ADMIN_EMAILS` (or `ADMIN_EMAIL`) on the server with verified Google email addresses.
-2. Ensure `firestore.rules` includes the bootstrapped admin email (`arivumathi224@gmail.com`) and/or add additional admin UIDs to `/admins/{uid}` from the Admin Console.
+Administrator privileges are **never** accepted from client payloads or profile fields. Configure `ADMIN_EMAILS` (or `ADMIN_EMAIL`) on the server with verified Google email addresses. The server derives the role after verifying the Firebase ID token; Firestore client rules do not grant administrator access.
 
 ## Security Architecture
 - **Authentication & RBAC:** Server-side Firebase ID token verification (`verifyIdToken`) with mandatory `email_verified === true` and `ADMIN_EMAILS` allowlist checks.
@@ -53,10 +51,14 @@ Administrator privileges are **never** accepted from client payloads or profile 
 
 ## Running & Testing
 ```bash
-npm run dev          # Start Express + Vite dev server on port 3000
-npm run build        # Build production Vite bundle into dist/
-npm run start        # Run production Cloud Run server (NODE_ENV=production)
-npm run typecheck    # Run strict TypeScript compiler check
-npm run lint         # Run TypeScript check + ESLint (including Firestore rules audit)
-npm test             # Run unit, integration, accessibility, and Firestore rules tests
+bun install --frozen-lockfile  # Install the locked dependencies
+bun run dev                    # Start Express + Vite dev server on port 3000
+bun run build                  # Build production Vite bundle into dist/
+bun run start                  # Run production server (NODE_ENV=production)
+bun run typecheck              # Run strict TypeScript compiler check
+bun run lint                   # Run TypeScript check + ESLint (including Firestore rules audit)
+bun run test                   # Run unit, integration, accessibility, and Firestore rules tests
+bunx playwright install chromium  # Install the browser used by real-browser tests
+bun run test:e2e               # Run Chromium accessibility and routing tests
+bun run test:emulator          # Run Firestore rules tests (Java 21 required)
 ```

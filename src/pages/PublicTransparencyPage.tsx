@@ -74,7 +74,7 @@ export function PublicTransparencyPage() {
   return (
     <div className="mx-auto max-w-7xl space-y-8 px-4 py-10 sm:px-6 lg:px-8">
       <div className="space-y-3">
-        <h1 className="font-display text-3xl font-bold tracking-tight text-slate-900">
+        <h1 className="font-display break-words text-3xl font-bold tracking-tight text-slate-900">
           {t.transparencyTitle}
         </h1>
         <p className="max-w-3xl text-base text-slate-600">{t.transparencySubtitle}</p>

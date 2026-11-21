@@ -1,0 +1,13 @@
+$ playwright test
+[WebServer] $ tsx server.ts
+
+[WebServer] (!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+[WebServer]   - `__dirname` (vite.config.ts:22:40). Use `import.meta.dirname` instead
+[WebServer] Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+
+Running 2 tests using 1 worker
+
+[1/2] tests/e2e/accessibility.spec.ts:60:1 › public routes render in Chromium without WCAG violations on desktop
+[2/2] tests/e2e/accessibility.spec.ts:75:1 › mobile navigation, language selection, and protected-route redirects work in Chromium
+  2 passed (14.7s)

@@ -1,0 +1,25 @@
+HTTP/1.1 200 OK
+Content-Security-Policy: default-src 'self';base-uri 'self';font-src 'self' https://fonts.gstatic.com;form-action 'self';frame-ancestors 'self' https://aistudio.google.com https://*.google.com;img-src 'self' data: https:;object-src 'none';script-src 'self' https://apis.google.com https://accounts.google.com;script-src-attr 'none';style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;upgrade-insecure-requests;connect-src 'self' https://*.googleapis.com https://*.firebaseapp.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com;frame-src 'self' https://*.firebaseapp.com https://accounts.google.com
+Cross-Origin-Opener-Policy: same-origin-allow-popups
+Cross-Origin-Resource-Policy: same-origin
+Origin-Agent-Cluster: ?1
+Referrer-Policy: no-referrer
+Strict-Transport-Security: max-age=31536000; includeSubDomains
+X-Content-Type-Options: nosniff
+X-DNS-Prefetch-Control: off
+X-Download-Options: noopen
+X-Frame-Options: SAMEORIGIN
+X-Permitted-Cross-Domain-Policies: none
+X-XSS-Protection: 0
+RateLimit-Policy: 120;w=60
+RateLimit-Limit: 120
+RateLimit-Remaining: 119
+RateLimit-Reset: 60
+Content-Type: application/json; charset=utf-8
+Content-Length: 159
+ETag: W/"9f-4wmb+g23ijzYloJp8TQqFSRCqNE"
+Date: Sat, 21 Nov 2026 11:15:43 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"status":"ok","service":"CivicResolve","model":"gemini-4-hydrogen","geminiConfigured":false,"firestoreConfigured":true,"timestamp":"2026-11-21T11:15:43.392Z"}

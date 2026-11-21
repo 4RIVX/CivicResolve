@@ -1,0 +1,3 @@
+bun audit v1.4.5 (a7733435c)
+
+No vulnerabilities found (checked 913 packages) [328.00ms]
