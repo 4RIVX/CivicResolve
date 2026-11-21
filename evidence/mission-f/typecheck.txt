@@ -1,0 +1,16 @@
+COMMAND=bun run typecheck
+$ tsc --noEmit
+error TS6053: File '/workspaces/CivicResolve/coverage/lcov-report/block-navigation.js' not found.
+  The file is in the program because:
+    Matched by default include pattern '**/*'
+error TS6053: File '/workspaces/CivicResolve/coverage/lcov-report/prettify.js' not found.
+  The file is in the program because:
+    Matched by default include pattern '**/*'
+error TS6053: File '/workspaces/CivicResolve/coverage/lcov-report/sorter.js' not found.
+  The file is in the program because:
+    Matched by default include pattern '**/*'
+error TS6053: File '/workspaces/CivicResolve/coverage/lcov-report/theme.js' not found.
+  The file is in the program because:
+    Matched by default include pattern '**/*'
+
+EXIT_CODE=2

@@ -1,0 +1,4 @@
+COMMAND=bun run typecheck
+$ tsc --noEmit
+
+EXIT_CODE=0

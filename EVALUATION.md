@@ -1,5 +1,17 @@
 # CivicResolve — Mission CDE Engineering Evaluation
 
+## Mission F code-quality verification
+
+Mission F was performed on the separate `mission-f/code-quality-audit` branch. It did not merge into `main`, change production infrastructure, or weaken the existing authentication, authorization, validation, or Firestore rules safeguards.
+
+- TypeScript is strict and checks unused locals and parameters. The full source lint configuration now covers JavaScript, JavaScript modules, TypeScript, and TSX application/test/configuration files with the recommended TypeScript ESLint rules. Firestore rules remain included in lint.
+- Dead or unreferenced client Firebase utilities were removed: `db`, `testConnection`, `handleFirestoreError`, `OperationType`, and `FirestoreErrorInfo`. The app context's `firebaseUser` field was also removed because it had no consumer.
+- Test-only Firestore mocks now use explicit interfaces instead of broad `any` types, while preserving a documented cast at the SDK boundary.
+- Generated `coverage`, `dist`, evidence, and test-report directories are excluded from strict TypeScript's default include.
+- Documentation scripts now include coverage and Bun audit commands.
+
+Raw Mission F evidence is stored in [`evidence/mission-f/`](./evidence/mission-f/). Live Gemini responses, Google OAuth accounts, production credentials, and staging deployment remain outside the scope of local verification.
+
 This evaluation reflects the current source, automated test results, local Chromium checks, and explicit infrastructure limitations. It does not treat mocked services as live Gemini, Google OAuth, Firestore, or staging verification. `SECURITY-AUDIT.md` is preserved and was not replaced.
 
 ## Verification summary
