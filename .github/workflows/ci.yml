@@ -6,9 +6,18 @@ on:
   pull_request:
     branches: [main, master]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: civicresolve-ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   verify:
+    name: Build, Test & Security Verification
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     steps:
       - name: Checkout repository
@@ -18,31 +27,51 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'npm'
 
-      - name: Setup Java 21 for Firebase Firestore Emulator
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Setup Java 21 for Firebase Emulator
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
+          distribution: temurin
           java-version: '21'
 
+      - name: Verify toolchain
+        run: |
+          node --version
+          bun --version
+          java -version
+
       - name: Install dependencies
-        run: npm ci
+        run: bun install --frozen-lockfile
 
       - name: TypeScript typecheck
-        run: npm run typecheck
+        run: bun run typecheck
 
-      - name: ESLint & Firestore Rules security check
-        run: npm run lint
+      - name: ESLint and Firestore Rules security check
+        run: bun run lint
 
-      - name: Unit, integration, accessibility & security test suite
-        run: npm test
+      - name: Unit, integration, accessibility and security tests
+        run: bun run test
+
+      - name: Test coverage
+        run: bun run test:coverage
 
       - name: Firestore Emulator rules regression suite
-        run: npx firebase-tools emulators:exec --only firestore "npx vitest run tests/firestore.emulator.test.ts"
+        run: bun run test:emulator
 
       - name: Dependency vulnerability audit
-        run: npm audit --audit-level=moderate
+        run: bun audit
 
       - name: Production Vite build
-        run: npm run build
+        run: bun run build
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: civicresolve-coverage-report
+          path: coverage/
+          if-no-files-found: warn
+          retention-days: 14
